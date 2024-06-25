@@ -59,24 +59,68 @@
 //   console.log(`Server running on http://localhost:${PORT}/login`);
 // });
 
+// const express = require('express');
+// const dotenv = require('dotenv');
+// const authRoutes = require('./routes/auth');
+
+// dotenv.config();
+
+// const app = express();
+// const PORT = process.env.PORT || 8080;
+
+// // Middleware
+// app.use(express.json());
+// app.use(express.urlencoded({ extended: true }));
+
+// // Routes
+// app.use('/auth', authRoutes);
+
+// // Start server
+// app.listen(PORT, () => {
+//   console.log(`Server running on port ${PORT}`);
+// });
+
 const express = require('express');
+const axios = require('axios');
 const dotenv = require('dotenv');
-const authRoutes = require('./routes/auth');
 
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 5000;
 
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
-app.use('/auth', authRoutes);
+app.get('/auth/callback', async (req, res) => {
+  const authCode = req.query.code;
+
+  try {
+    if (!authCode) {
+      return res.status(400).json({ error: 'Authorization code not found' });
+    }
+
+    // Exchange authorization code for access token
+    const response = await axios.post('https://api.fyers.in/api/v3/token', {
+      client_id: process.env.FYERS_CLIENT_ID,
+      client_secret: process.env.FYERS_CLIENT_SECRET,
+      grant_type: 'authorization_code',
+      code: authCode,
+    });
+
+    // Send access token to frontend
+    res.json({ accessToken: response.data.access_token });
+  } catch (error) {
+    console.error('Error exchanging auth code for access token:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 // Start server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
 
