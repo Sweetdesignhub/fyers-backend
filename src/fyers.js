@@ -36,7 +36,7 @@ fyers.setAppId(APPID);
 fyers.setRedirectUrl(REDIRECT_URI);
 
 // API to generate auth code URL
-app.get("/api/fyers", (req, res) => {
+app.get("fyers", (req, res) => {
   const authCodeURL = fyers.generateAuthCode();
   res.json({ authCodeURL });
 });
