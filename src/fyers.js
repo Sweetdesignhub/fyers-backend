@@ -19,7 +19,13 @@ const PORT = process.env.PORT || 8080;
 
 // Middleware to parse JSON bodies
 app.use(express.json());
-app.use(cors());
+const corsOptions = {
+  origin: 'https://fyers-demo.netlify.app',
+  optionsSuccessStatus: 200
+};
+
+app.use(cors(corsOptions));
+
 
 // Set your APPID and RedirectURL from environment variables
 const APPID = process.env.FYERS_APPID;
