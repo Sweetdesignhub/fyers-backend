@@ -770,9 +770,7 @@ app.use(express.json());
 
 // Configure CORS
 const corsOptions = {
-  origin: process.env.NODE_ENV === 'development'
-    ? 'http://localhost:5173' 
-    : 'https://fyers-frontend.vercel.app',
+  origin: 'https://fyers-frontend.vercel.app',
   credentials: true,
 };
 
