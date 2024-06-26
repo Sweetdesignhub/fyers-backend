@@ -772,7 +772,7 @@ app.use(express.json());
 const corsOptions = {
   origin: process.env.NODE_ENV === 'development'
     ? 'http://localhost:5173' 
-    : 'https://fyers-demo.netlify.app',
+    : 'https://fyers-frontend.vercel.app',
   credentials: true,
 };
 
