@@ -790,6 +790,53 @@ app.get("/fyers", (req, res) => {
   res.json({ authCodeURL });
 });
 
+// API to generate access token
+app.post("/generateAccessToken", async (req, res) => {
+  const uri = req.body.uri;
+
+  if (!uri) {
+    return res
+      .status(400)
+      .json({ error: "URI is required in the request body" });
+  }
+
+  const urlParams = new URLSearchParams(uri);
+  const authCode = urlParams.get("auth_code");
+
+  if (!authCode) {
+    return res.status(400).json({ error: "Auth code not found in URI" });
+  }
+
+  console.log(authCode);
+
+  try {
+    const response = await fyers.generate_access_token({
+      client_id: APPID,
+      secret_key: SECRET_KEY,
+      auth_code: authCode,
+    });
+
+    if (response.s === "ok") {
+      fyers.setAccessToken(response.access_token);
+      res.json({ accessToken: response.access_token });
+    } else {
+      res.status(400).json({ error: response });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// API to fetch profile details
+app.get("/fetchProfile", async (req, res) => {
+  try {
+    const response = await fyers.get_profile();
+    res.json(response);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
